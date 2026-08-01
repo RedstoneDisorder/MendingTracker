@@ -1,0 +1,80 @@
+package redstonedisorder.mendingtracker;
+
+import net.fabricmc.api.ClientModInitializer;
+
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.debug.DebugScreenEntries;
+import net.minecraft.client.gui.components.debug.DebugScreenEntryStatus;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class MendingTracker implements ClientModInitializer {
+	public static final String MOD_ID = "mendingtracker";
+
+	// This logger is used to write text to the console and the log file.
+	// It is considered best practice to use your mod id as the logger's name.
+	// That way, it's clear which mod wrote info, warnings, and errors.
+	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
+	public static AtomicInteger damagedItems = new AtomicInteger();
+	public static AtomicInteger durabilityNeeded = new AtomicInteger();
+
+	@Override
+	public void onInitializeClient() {
+		// This code runs as soon as Minecraft is in a mod-load-ready state.
+		// However, some things (like resources) may still be uninitialized.
+		// Proceed with mild caution.
+
+		boolean shouldRenderOverlay = FabricLoader.getInstance().isModLoaded("minihud");
+
+		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			if (client.player != null) {
+                Inventory inventory = client.player.getInventory();
+				damagedItems.set(0);
+				durabilityNeeded.set(0);
+
+				ArrayList<ItemStack> itemStacks = new ArrayList<>(List.of(inventory.getItem(36), inventory.getItem(37), inventory.getItem(38), inventory.getItem(39), inventory.getItem(40), inventory.getSelectedItem()));
+				itemStacks.forEach(itemStack -> {
+					if (itemStack.getDamageValue() > 0 && EnchantmentHelper.getItemEnchantmentLevel(client.player.registryAccess().getOrThrow(Enchantments.MENDING), itemStack) > 0) {
+						damagedItems.incrementAndGet();
+						durabilityNeeded.addAndGet(itemStack.getDamageValue());
+					}
+				});
+			}
+		});
+
+		LOGGER.info("Mending Tracker initialized!");
+
+		if (shouldRenderOverlay) LOGGER.info("MiniHUD loaded, default renderer will be disabled.");
+		else LOGGER.info("MiniHUD not loaded, default renderer will be used.");
+		HudElementRegistry.attachElementAfter(VanillaHudElements.MISC_OVERLAYS,Identifier.fromNamespaceAndPath(MOD_ID, "mending_overlay"), (graphics, tickCounter) -> {
+			Minecraft client = Minecraft.getInstance();
+			Component message = Component.literal("Equipment pieces to mend: ").append(Component.literal(String.valueOf(damagedItems)).withStyle(ChatFormatting.GREEN)).append(Component.literal(", XP required: ")).append(Component.literal(String.valueOf((durabilityNeeded.intValue() + 1) / 2)).withStyle(ChatFormatting.GREEN));
+			Font font = client.font;
+
+			// HORRENDOUS IF STATEMENT INCOMING, PROGRAMMERS PLEASE CLOSE YOUR EYES!!!
+
+			if (!client.debugEntries.isOverlayVisible() && DebugScreenEntries.allEntries().entrySet().stream().noneMatch(entry -> !entry.getValue().category().label().getString().equals("Debug Renderers") && client.debugEntries.getStatus(entry.getKey()).equals(DebugScreenEntryStatus.ALWAYS_ON)) && !shouldRenderOverlay) {
+				graphics.fill(8, 8, 11 + font.width(message.getString()), 11 + font.lineHeight, 0x60000000);
+				graphics.drawString(font, message, 10, 10, 0xFFFFFFFF);
+			}
+		});
+	}
+}

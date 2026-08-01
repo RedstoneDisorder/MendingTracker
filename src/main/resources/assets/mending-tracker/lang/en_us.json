@@ -1,0 +1,4 @@
+{
+  "minihud.config.info_toggle.comment.infoMending": "Shows how many mending items can be repaired\n(only from armor, hand, offhand) and the\namount of XP required to mend everything fully.",
+  "minihud.info_line.mending_info": "Equipment pieces to mend: %s%d%s, XP required: %s%d"
+}

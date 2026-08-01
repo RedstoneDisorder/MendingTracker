@@ -1,0 +1,15 @@
+{
+	"required": true,
+	"package": "redstonedisorder.mendingtracker.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"MiniHudInfoLine",
+		"MiniHudLineRenderer"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

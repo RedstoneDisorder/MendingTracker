@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"id": "mending-tracker",
+	"version": "${version}",
+	"name": "Mending Tracker",
+	"description": "A mod that tracks the amount of XP left until all mending equipment is full.",
+	"authors": [
+		"RedstoneDisorder"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/mending-tracker/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"redstonedisorder.mendingtracker.MendingTracker"
+		]
+	},
+	"mixins": [
+		"mendingtracker.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "=1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"malilib": "*",
+		"minihud": "*"
+	}
+}
