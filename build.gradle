@@ -1,7 +1,6 @@
 plugins {
 	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 	id 'maven-publish'
-	id 'com.gradleup.shadow' version '8.3.6'
 }
 
 version = project.mod_version
@@ -19,6 +18,10 @@ repositories {
 	maven { url = 'https://maven.fallenbreath.me/releases'
 		content {includeGroupAndSubgroups("me.fallenbreath")}
 	}
+	maven {
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/"
+	}
 }
 
 dependencies {
@@ -31,12 +34,12 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
 	modCompileOnly "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
-	modLocalRuntime "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
+//	modLocalRuntime "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
 
 	modCompileOnly "fi.dy.masa.minihud:minihud-fabric-${project.minecraft_version}:${project.minihud_version}"
-	modLocalRuntime "fi.dy.masa.minihud:minihud-fabric-${project.minecraft_version}:${project.minihud_version}"
+//	modLocalRuntime "fi.dy.masa.minihud:minihud-fabric-${project.minecraft_version}:${project.minihud_version}"
 
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
 processResources {
@@ -69,11 +72,6 @@ jar {
 	from("LICENSE") {
 		rename { "${it}_$projectName"}
 	}
-	manifest {
-		attributes(
-				"Main-Class": "redstonedisorder.mendingtracker.Uninstaller"
-		)
-	}
 }
 
 // configure the maven publication
@@ -91,13 +89,4 @@ publishing {
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
 	}
-}
-
-shadowJar {
-	dependencies {
-		include(dependency('com.fasterxml.jackson.core:jackson-databind:.*'))
-		include(dependency('com.fasterxml.jackson.core:jackson-core:.*'))
-		include(dependency('com.fasterxml.jackson.core:jackson-annotations:.*'))
-	}
-	archiveClassifier = 'all'
 }

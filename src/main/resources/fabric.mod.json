@@ -17,6 +17,9 @@
 	"entrypoints": {
 		"client": [
 			"redstonedisorder.mendingtracker.MendingTracker"
+		],
+		"modmenu": [
+			"redstonedisorder.mendingtracker.ModMenuIntegration"
 		]
 	},
 	"mixins": [
@@ -30,6 +33,7 @@
 	},
 	"suggests": {
 		"malilib": "*",
-		"minihud": "*"
+		"minihud": "*",
+		"modmenu": "*"
 	}
 }

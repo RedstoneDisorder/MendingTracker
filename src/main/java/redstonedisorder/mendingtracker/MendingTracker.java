@@ -10,6 +10,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.debug.DebugEntryCategory;
 import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 import net.minecraft.client.gui.components.debug.DebugScreenEntryStatus;
 import net.minecraft.network.chat.Component;
@@ -25,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static redstonedisorder.mendingtracker.ConfigHelper.configOptions;
+
 public class MendingTracker implements ClientModInitializer {
 	public static final String MOD_ID = "mendingtracker";
 
@@ -36,13 +39,22 @@ public class MendingTracker implements ClientModInitializer {
 	public static AtomicInteger damagedItems = new AtomicInteger();
 	public static AtomicInteger durabilityNeeded = new AtomicInteger();
 
+	boolean shouldRenderOverlay = !FabricLoader.getInstance().isModLoaded("minihud");
+
+	public static int effectiveXpos;
+	public static int effectiveYpos;
+	public static ConfigOptions.Alignment effectiveAlignment = ConfigOptions.textAlignment;
+
 	@Override
 	public void onInitializeClient() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		boolean shouldRenderOverlay = FabricLoader.getInstance().isModLoaded("minihud");
+		ConfigHelper.getConfigOptions();
+
+		effectiveXpos = configOptions.xPos;
+		effectiveYpos = configOptions.yPos;
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (client.player != null) {
@@ -62,19 +74,33 @@ public class MendingTracker implements ClientModInitializer {
 
 		LOGGER.info("Mending Tracker initialized!");
 
-		if (shouldRenderOverlay) LOGGER.info("MiniHUD loaded, default renderer will be disabled.");
-		else LOGGER.info("MiniHUD not loaded, default renderer will be used.");
-		HudElementRegistry.attachElementAfter(VanillaHudElements.MISC_OVERLAYS,Identifier.fromNamespaceAndPath(MOD_ID, "mending_overlay"), (graphics, tickCounter) -> {
-			Minecraft client = Minecraft.getInstance();
-			Component message = Component.literal("Equipment pieces to mend: ").append(Component.literal(String.valueOf(damagedItems)).withStyle(ChatFormatting.GREEN)).append(Component.literal(", XP required: ")).append(Component.literal(String.valueOf((durabilityNeeded.intValue() + 1) / 2)).withStyle(ChatFormatting.GREEN));
-			Font font = client.font;
+		if (shouldRenderOverlay) {
+			LOGGER.info("MiniHUD not loaded, default renderer will be used.");
+			HudElementRegistry.attachElementAfter(VanillaHudElements.MISC_OVERLAYS,Identifier.fromNamespaceAndPath(MOD_ID, "mending_overlay"), (graphics, tickCounter) -> {
+				Minecraft client = Minecraft.getInstance();
+				Component message = Component.literal("Equipment pieces to mend: ").append(Component.literal(String.valueOf(damagedItems)).withStyle(ChatFormatting.GREEN)).append(Component.literal(", XP required: ")).append(Component.literal(String.valueOf((durabilityNeeded.intValue() + 1) / 2)).withStyle(ChatFormatting.GREEN));
+				Font font = client.font;
 
-			// HORRENDOUS IF STATEMENT INCOMING, PROGRAMMERS PLEASE CLOSE YOUR EYES!!!
+				// HORRENDOUS IF STATEMENT INCOMING, PROGRAMMERS PLEASE CLOSE YOUR EYES!!!
 
-			if (!client.debugEntries.isOverlayVisible() && DebugScreenEntries.allEntries().entrySet().stream().noneMatch(entry -> !entry.getValue().category().label().getString().equals("Debug Renderers") && client.debugEntries.getStatus(entry.getKey()).equals(DebugScreenEntryStatus.ALWAYS_ON)) && !shouldRenderOverlay) {
-				graphics.fill(8, 8, 11 + font.width(message.getString()), 11 + font.lineHeight, 0x60000000);
-				graphics.drawString(font, message, 10, 10, 0xFFFFFFFF);
-			}
-		});
+				if (!client.debugEntries.isOverlayVisible() && DebugScreenEntries.allEntries().entrySet().stream().noneMatch(entry -> entry.getValue().category().equals(DebugEntryCategory.SCREEN_TEXT) && client.debugEntries.getStatus(entry.getKey()).equals(DebugScreenEntryStatus.ALWAYS_ON))) {
+					graphics.fill(effectiveXpos * client.getWindow().getGuiScaledWidth() / 100,
+							effectiveYpos * client.getWindow().getGuiScaledHeight() / 100,
+							effectiveXpos * client.getWindow().getGuiScaledWidth() / 100 + font.width(message.getString()) + 3,
+							effectiveYpos * client.getWindow().getGuiScaledHeight() / 100 + font.lineHeight + 3,
+							0x60000000
+					);
+
+					graphics.drawString(font,
+							message,
+							effectiveXpos * client.getWindow().getGuiScaledWidth() / 100 + 2,
+							effectiveYpos * client.getWindow().getGuiScaledHeight() / 100 + 2,
+							0xFFFFFFFF);
+				}
+			});
+		}
+		else {
+			LOGGER.info("MiniHUD loaded, default renderer will be disabled.");
+		}
 	}
 }
