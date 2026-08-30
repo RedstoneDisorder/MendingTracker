@@ -17,7 +17,7 @@ public class ConfigHelper {
     public static ConfigOptions configOptions = new ConfigOptions();
 
     public static void getConfigOptions() {
-        try (Reader reader = Files.newBufferedReader(configPath)) {
+        if (Files.exists(configPath)) try (Reader reader = Files.newBufferedReader(configPath)) {
             configOptions = gson.fromJson(reader, ConfigOptions.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
