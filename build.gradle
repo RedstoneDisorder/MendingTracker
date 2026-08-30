@@ -34,10 +34,10 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
 	modCompileOnly "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
-//	modLocalRuntime "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
+	modLocalRuntime "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
 
 	modCompileOnly "fi.dy.masa.minihud:minihud-fabric-${project.minecraft_version}:${project.minihud_version}"
-//	modLocalRuntime "fi.dy.masa.minihud:minihud-fabric-${project.minecraft_version}:${project.minihud_version}"
+	modLocalRuntime "fi.dy.masa.minihud:minihud-fabric-${project.minecraft_version}:${project.minihud_version}"
 
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 }

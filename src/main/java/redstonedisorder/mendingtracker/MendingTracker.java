@@ -39,7 +39,7 @@ public class MendingTracker implements ClientModInitializer {
 	public static AtomicInteger damagedItems = new AtomicInteger();
 	public static AtomicInteger durabilityNeeded = new AtomicInteger();
 
-	boolean shouldRenderOverlay = !FabricLoader.getInstance().isModLoaded("minihud");
+	boolean isMinihudLoaded = FabricLoader.getInstance().isModLoaded("minihud");
 
 	public static int effectiveXpos;
 	public static int effectiveYpos;
@@ -75,47 +75,43 @@ public class MendingTracker implements ClientModInitializer {
 
 		LOGGER.info("Mending Tracker initialized!");
 
-		if (shouldRenderOverlay || effectiveMinihudOverride) {
-			LOGGER.info("MiniHUD not loaded, default renderer will be used.");
+		Minecraft client = Minecraft.getInstance();
+		Component message = Component.literal("Equipment pieces to mend: ").append(Component.literal(String.valueOf(damagedItems)).withStyle(ChatFormatting.GREEN)).append(Component.literal(", XP required: ")).append(Component.literal(String.valueOf((durabilityNeeded.intValue() + 1) / 2)).withStyle(ChatFormatting.GREEN));
 
-			Minecraft client = Minecraft.getInstance();
-			Component message = Component.literal("Equipment pieces to mend: ").append(Component.literal(String.valueOf(damagedItems)).withStyle(ChatFormatting.GREEN)).append(Component.literal(", XP required: ")).append(Component.literal(String.valueOf((durabilityNeeded.intValue() + 1) / 2)).withStyle(ChatFormatting.GREEN));
+		HudElementRegistry.attachElementAfter(VanillaHudElements.MISC_OVERLAYS,Identifier.fromNamespaceAndPath(MOD_ID, "mending_overlay"), (graphics, tickCounter) -> {
+
 			Font font = client.font;
 
-			HudElementRegistry.attachElementAfter(VanillaHudElements.MISC_OVERLAYS,Identifier.fromNamespaceAndPath(MOD_ID, "mending_overlay"), (graphics, tickCounter) -> {
-				// HORRENDOUS IF STATEMENT INCOMING, PROGRAMMERS PLEASE CLOSE YOUR EYES!!!
+			// HORRENDOUS IF STATEMENT INCOMING, PROGRAMMERS PLEASE CLOSE YOUR EYES!!!
 
-				if (!client.debugEntries.isOverlayVisible() && DebugScreenEntries.allEntries().entrySet().stream().noneMatch(entry -> entry.getValue().category().equals(DebugEntryCategory.SCREEN_TEXT) && client.debugEntries.getStatus(entry.getKey()).equals(DebugScreenEntryStatus.ALWAYS_ON))) {
-					int messageWidth = font.width(message);
+			if (!client.debugEntries.isOverlayVisible() && DebugScreenEntries.allEntries().entrySet().stream().noneMatch(entry -> entry.getValue().category().equals(DebugEntryCategory.SCREEN_TEXT) && client.debugEntries.getStatus(entry.getKey()).equals(DebugScreenEntryStatus.ALWAYS_ON))) {
+				int messageWidth = font.width(message);
 
-					int baseXpos = effectiveXpos * client.getWindow().getGuiScaledWidth() / 100;
-					int baseYpos = effectiveYpos * client.getWindow().getGuiScaledHeight() / 100;
+				int baseXpos = effectiveXpos * client.getWindow().getGuiScaledWidth() / 100;
+				int baseYpos = effectiveYpos * client.getWindow().getGuiScaledHeight() / 100;
 
-					graphics.fill(
-							effectiveAlignment == ConfigOptions.Alignment.Left ? baseXpos :
-									effectiveAlignment == ConfigOptions.Alignment.Center ? baseXpos - messageWidth / 2 - 1 :
-											baseXpos - messageWidth - 3,
-							baseYpos,
-							effectiveAlignment == ConfigOptions.Alignment.Left ? baseXpos + messageWidth + 3 :
-									effectiveAlignment == ConfigOptions.Alignment.Center ? baseXpos + messageWidth / 2 + 2 :
-											baseXpos,
-							baseYpos + font.lineHeight + 3,
-							0x60000000
-					);
+				graphics.fill(
+						effectiveAlignment == ConfigOptions.Alignment.Left ? baseXpos :
+								effectiveAlignment == ConfigOptions.Alignment.Center ? baseXpos - messageWidth / 2 - 1 :
+										baseXpos - messageWidth - 3,
+						baseYpos,
+						effectiveAlignment == ConfigOptions.Alignment.Left ? baseXpos + messageWidth + 3 :
+								effectiveAlignment == ConfigOptions.Alignment.Center ? baseXpos + messageWidth / 2 + 2 :
+										baseXpos,
+						baseYpos + font.lineHeight + 3,
+						!isMinihudLoaded || effectiveMinihudOverride ? 0x60000000 : 0x00000000
+				);
 
-					graphics.drawString(
-							font,
-							message,
-							effectiveAlignment == ConfigOptions.Alignment.Left ? baseXpos + 2 :
-									effectiveAlignment == ConfigOptions.Alignment.Center ? baseXpos - messageWidth / 2 + 1 :
-											baseXpos - messageWidth - 1,
-							baseYpos + 2,
-							0xFFFFFFFF
-					);
-				}
-			});
-		} else {
-			LOGGER.info("MiniHUD loaded, default renderer will be disabled.");
-		}
+				graphics.drawString(
+						font,
+						message,
+						effectiveAlignment == ConfigOptions.Alignment.Left ? baseXpos + 2 :
+								effectiveAlignment == ConfigOptions.Alignment.Center ? baseXpos - messageWidth / 2 + 1 :
+										baseXpos - messageWidth - 1,
+						baseYpos + 2,
+						!isMinihudLoaded || effectiveMinihudOverride ? 0xFFFFFFFF : 0x00000000
+				);
+			}
+		});
 	}
 }
