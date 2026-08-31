@@ -56,6 +56,8 @@ public class MendingTracker implements ClientModInitializer {
 
 		effectiveXpos = configOptions.xPos;
 		effectiveYpos = configOptions.yPos;
+		effectiveAlignment = configOptions.textAlignment;
+		effectiveMinihudOverride = configOptions.overrideMinihud;
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (client.player != null) {
@@ -73,13 +75,11 @@ public class MendingTracker implements ClientModInitializer {
 			}
 		});
 
-		LOGGER.info("Mending Tracker initialized!");
-
 		Minecraft client = Minecraft.getInstance();
-		Component message = Component.literal("Equipment pieces to mend: ").append(Component.literal(String.valueOf(damagedItems)).withStyle(ChatFormatting.GREEN)).append(Component.literal(", XP required: ")).append(Component.literal(String.valueOf((durabilityNeeded.intValue() + 1) / 2)).withStyle(ChatFormatting.GREEN));
 
 		HudElementRegistry.attachElementAfter(VanillaHudElements.MISC_OVERLAYS,Identifier.fromNamespaceAndPath(MOD_ID, "mending_overlay"), (graphics, tickCounter) -> {
 
+			Component message = Component.literal("Equipment pieces to mend: ").append(Component.literal(String.valueOf(damagedItems)).withStyle(ChatFormatting.GREEN)).append(Component.literal(", XP required: ")).append(Component.literal(String.valueOf((durabilityNeeded.intValue() + 1) / 2)).withStyle(ChatFormatting.GREEN));
 			Font font = client.font;
 
 			// HORRENDOUS IF STATEMENT INCOMING, PROGRAMMERS PLEASE CLOSE YOUR EYES!!!
@@ -113,5 +113,7 @@ public class MendingTracker implements ClientModInitializer {
 				);
 			}
 		});
+
+		LOGGER.info("Mending Tracker initialized!");
 	}
 }

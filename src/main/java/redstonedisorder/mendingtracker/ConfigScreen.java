@@ -22,9 +22,7 @@ public class ConfigScreen extends Screen {
 
     @Override
     protected void init() {
-        // TODO: Figure out values to actually make the screen look good
-
-        AbstractSliderButton xPosSlider = new AbstractSliderButton(20, 20, 150, 20, Component.literal("GUI element X position: " + configOptions.xPos), (double) configOptions.xPos / 100) {
+        AbstractSliderButton xPosSlider = new AbstractSliderButton(width / 8, height / 8, 11 * width / 32, Button.DEFAULT_HEIGHT, Component.literal("GUI element X position: " + configOptions.xPos), (double) configOptions.xPos / 100) {
             @Override
             protected void updateMessage() {
                 this.setMessage(Component.literal("GUI element X position: " + Math.round(value * 100)));
@@ -36,7 +34,7 @@ public class ConfigScreen extends Screen {
             }
         };
 
-        AbstractSliderButton yPosSlider = new AbstractSliderButton(20, 40, 150, 20, Component.literal("GUI element Y position: " + configOptions.yPos), (double) configOptions.yPos / 100) {
+        AbstractSliderButton yPosSlider = new AbstractSliderButton(width / 8, height / 4, 11 * width / 32, Button.DEFAULT_HEIGHT, Component.literal("GUI element Y position: " + configOptions.yPos), (double) configOptions.yPos / 100) {
             @Override
             protected void updateMessage() {
                 this.setMessage(Component.literal("GUI element Y position: " + Math.round(value * 100)));
@@ -54,14 +52,14 @@ public class ConfigScreen extends Screen {
         Button alignmentButton = Button.builder(Component.literal("Text alignment: " + configOptions.textAlignment.name()), button -> {
             effectiveAlignment = ConfigOptions.Alignment.values()[(effectiveAlignment.ordinal() + 1) % 3];
             button.setMessage(Component.literal("Text alignment: " + effectiveAlignment.name()));
-        }).bounds(400, 50, 200, 20).build();
+        }).bounds(17 * width / 32, height / 8, 11 * width / 32, Button.DEFAULT_HEIGHT).build();
 
         addRenderableWidget(alignmentButton);
 
         Button overrideButton = Button.builder(Component.literal("Override MiniHUD: " + configOptions.overrideMinihud), button -> {
             effectiveMinihudOverride = !effectiveMinihudOverride;
             button.setMessage(Component.literal("Override MiniHUD: " + effectiveMinihudOverride));
-        }).bounds(400, 100, 200, 20).build();
+        }).bounds(17 * width / 32, height / 4, 11 * width / 32, Button.DEFAULT_HEIGHT).build();
 
         if (!FabricLoader.getInstance().isModLoaded("minihud")) {
             overrideButton.active = false;
@@ -79,9 +77,14 @@ public class ConfigScreen extends Screen {
             if (!success) {
                 minecraft.getToastManager().addToast(new SystemToast(SystemToast.SystemToastId.PERIODIC_NOTIFICATION, Component.literal("Config error"), Component.literal("The config could not be saved.")));
             }
-        }).bounds(100, 100, 200, 20).build();
+            onClose();
+        }).bounds(5 * width / 16, 3 * height / 8, 3 * width / 8, 20).build();
 
         addRenderableWidget(saveButton);
+
+        Button discardButton = Button.builder(Component.literal("Exit without saving"), button -> onClose()).bounds(5 * width / 16, 15 * height / 32, 3 * width / 8, 20).build();
+
+        addRenderableWidget(discardButton);
     }
 
     @Override
