@@ -102,7 +102,7 @@ public class MendingTracker implements ClientModInitializer {
 						!isMinihudLoaded || effectiveMinihudOverride ? 0x60000000 : 0x00000000
 				);
 
-				graphics.drawString(
+				graphics.text(
 						font,
 						message,
 						effectiveAlignment == ConfigOptions.Alignment.Left ? baseXpos + 2 :
