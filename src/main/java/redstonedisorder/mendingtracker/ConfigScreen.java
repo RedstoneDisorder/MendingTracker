@@ -75,7 +75,7 @@ public class ConfigScreen extends Screen {
             configOptions.overrideMinihud = effectiveMinihudOverride;
             boolean success = ConfigHelper.saveConfig(configOptions);
             if (!success) {
-                minecraft.getToastManager().addToast(new SystemToast(SystemToast.SystemToastId.PERIODIC_NOTIFICATION, Component.literal("Config error"), Component.literal("The config could not be saved.")));
+                minecraft.gui.toastManager().addToast(new SystemToast(SystemToast.SystemToastId.PERIODIC_NOTIFICATION, Component.literal("Config error"), Component.literal("The config could not be saved.")));
             }
             onClose();
         }).bounds(5 * width / 16, 3 * height / 8, 3 * width / 8, 20).build();
@@ -93,6 +93,6 @@ public class ConfigScreen extends Screen {
         effectiveYpos = configOptions.yPos;
         effectiveAlignment = configOptions.textAlignment;
         effectiveMinihudOverride = configOptions.overrideMinihud;
-        Minecraft.getInstance().setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
 }

@@ -117,7 +117,7 @@ public class MendingTracker implements ClientModInitializer {
 		});
 
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(ClientCommands.literal("mendingTracker").executes(context -> {
-			client.execute(() -> client.setScreen(new ConfigScreen(null)));
+			client.execute(() -> client.gui.setScreen(new ConfigScreen(null)));
 			return 0;
 		})));
 
