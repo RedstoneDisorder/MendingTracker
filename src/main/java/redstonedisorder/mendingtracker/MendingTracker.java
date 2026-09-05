@@ -2,6 +2,8 @@ package redstonedisorder.mendingtracker;
 
 import net.fabricmc.api.ClientModInitializer;
 
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
@@ -113,6 +115,11 @@ public class MendingTracker implements ClientModInitializer {
 				);
 			}
 		});
+
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(ClientCommands.literal("mendingTracker").executes(context -> {
+			client.execute(() -> client.setScreen(new ConfigScreen(null)));
+			return 0;
+		})));
 
 		LOGGER.info("Mending Tracker initialized!");
 	}
