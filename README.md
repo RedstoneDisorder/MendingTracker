@@ -1,9 +1,7 @@
 # Mending Tracker
 
-## Setup
+(placeholder for badges)
 
-For setup instructions, please see the [Fabric Documentation page](https://docs.fabricmc.net/develop/getting-started/creating-a-project#setting-up) related to the IDE that you are using.
-
-## License
-
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+This mod adds a HUD element that tracks how many equipment pieces need mending, and how much XP is needed to fully repair all your items. If MiniHUD is installed, an info line can be displayed instead.
+## Suggestions?
+Please submit feedback through [GitHub issues](placeholder url)! I already have some ideas in mind, like adding an ETA when running XP farms or an uninstalling feature to revert changes to MiniHUD's config.
