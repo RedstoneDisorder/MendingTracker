@@ -8,10 +8,11 @@
 		"RedstoneDisorder"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"source": "https://github.com/RedstoneDisorder/MendingTracker",
+		"issues": "https://github.com/RedstoneDisorder/MendingTracker/issues",
+		"home": "https://modrinth.com/mod/mending-tracker"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/mending-tracker/icon.png",
 	"environment": "client",
 	"entrypoints": {
