@@ -1,6 +1,6 @@
 # Mending Tracker
-
-(placeholder for badges)
+![Modrinth Downloads](https://img.shields.io/modrinth/dt/kLfekvnT?logo=modrinth)
+![Modrinth Version](https://img.shields.io/modrinth/v/kLfekvnT)
 
 This mod adds a HUD element that tracks how many equipment pieces need mending, and how much XP is needed to fully repair all your items. If MiniHUD is installed, an info line can be displayed instead.
 ## Suggestions?
